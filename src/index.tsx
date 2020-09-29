@@ -2,15 +2,27 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Users } from "./users";
 
-main();
+let state: any[] = [];
 
-async function main() {
+render();
+
+async function dispatch(action: {}) {
+  console.log("dispatch", action);
+  const users = await fetchUsers();
+  state = users;
+  render();
+}
+
+async function render() {
+  ReactDOM.render(
+    <Users dispatch={dispatch} state={state} />,
+    document.getElementById("root")
+  );
+}
+
+async function fetchUsers() {
   const usersJson = await (
     await fetch("https://reqres.in/api/users?page=2")
   ).json();
-  console.log("usersJson", usersJson);
-  ReactDOM.render(
-    <Users users={usersJson.data} />,
-    document.getElementById("root")
-  );
+  return usersJson.data;
 }
